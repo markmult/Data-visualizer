@@ -61,6 +61,7 @@ class Widget(QWidget):
         self.right.addWidget(QLabel("Set column to index (Optional), type column name eg. City"))
         self.right.addWidget(self.index_col)
         self.right.addWidget(self.index)
+        self.right.addWidget(QLabel("Please, drop data columns that contain only text before plotting. Index column is exception."))
         self.right.addWidget(self.plot)
         self.right.addWidget(self.color_plot)
         self.right.addWidget(self.quit)
@@ -69,7 +70,7 @@ class Widget(QWidget):
         self.left = QVBoxLayout()
 
         # Normalization / Scaling options
-        self.scaling = QGroupBox("Scaling and normalization")
+        self.scaling = QGroupBox("Scaling and normalization. Please select atleast two options")
         self.scaling.setFlat(True)
         self.minmax = QCheckBox("&Minmax")
         self.norm = QCheckBox("&Standard scaler")
@@ -86,7 +87,7 @@ class Widget(QWidget):
         self.left.addWidget(self.scaling)
 
         # Dimensionality reduction options
-        self.dim_red = QGroupBox("Dimensionality reduction")
+        self.dim_red = QGroupBox("Dimensionality reduction. Please select atleast two options")
         self.dim_red.setFlat(True)
         self.pca = QCheckBox("&PCA")
         self.mds = QCheckBox("&MDS")
@@ -157,6 +158,18 @@ class Widget(QWidget):
         self.drop.clicked.connect(self.drop_column)
         self.index.clicked.connect(self.change_index)
 
+        self.minmax.stateChanged.connect(self.plot_disable)
+        self.norm.stateChanged.connect(self.plot_disable)
+        self.mean.stateChanged.connect(self.plot_disable)
+        self.vect.stateChanged.connect(self.plot_disable)
+        self.robust.stateChanged.connect(self.plot_disable)
+
+        self.pca.stateChanged.connect(self.plot_disable)
+        self.mds.stateChanged.connect(self.plot_disable)
+        self.isomap.stateChanged.connect(self.plot_disable)
+        self.umap.stateChanged.connect(self.plot_disable)
+        self.t_sne.stateChanged.connect(self.plot_disable)
+
 
     @Slot()
     def check_disable(self, s):
@@ -167,6 +180,21 @@ class Widget(QWidget):
             self.load.setEnabled(False)
         else:
             self.load.setEnabled(True)
+
+
+    @Slot()
+    def plot_disable(self):
+        """
+        Disable plotting when two or less methods are selected.
+        """
+        norm_ops, dim_ops = self.plot_options()
+        if len(norm_ops) < 2 or len(dim_ops) < 2:
+            self.plot.setEnabled(False)
+            self.color_plot.setEnabled(False)
+        else:
+            self.plot.setEnabled(True)
+            self.color_plot.setEnabled(True)
+
 
     @Slot()
     def load_data(self):
@@ -182,25 +210,33 @@ class Widget(QWidget):
             self.data = data
             self.update_table()
         except FileNotFoundError:
-            self.dialog = FileNotFoundWindow()
-            self.dialog.show()
+            self.handle_error("File not found\nIf file is in the same folder with this code just type the file name\nFor example file.csv")
+            
 
     @Slot()
     def drop_column(self):
         """
         Drop columns according to column index
         """
-        cols = [int(x) for x in self.drop_cols.text().split(',')]
-        self.data = self.data.drop(self.data.columns[cols], axis=1)
-        self.update_table()
+        try:
+            cols = [int(x) for x in self.drop_cols.text().split(',')]
+            self.data = self.data.drop(self.data.columns[cols], axis=1)
+            self.update_table()
+        except (IndexError, ValueError):
+            self.handle_error("Invalid index value\nUse index numbers starting from 0\nFor example 0,1,2 or just 0 etc.")
+
 
     @Slot()
     def change_index(self):
         """
         Change index column in dataframe and update table.
         """
-        self.data = self.data.set_index(self.index_col.text())
-        self.update_table()
+        try:
+            self.data = self.data.set_index(self.index_col.text())
+            self.update_table()
+        except KeyError:
+            self.handle_error("Column not found")
+    
 
     @Slot()
     def plot_data(self):
@@ -216,6 +252,7 @@ class Widget(QWidget):
         self.dialog = PlotWindow(transformed_data, norm_options, dim_options)
         self.dialog.show()
 
+
     @Slot()
     def plot_colors(self):
         """
@@ -230,6 +267,7 @@ class Widget(QWidget):
         transformed_data = transformations.transform_data(sorted_data, norm_options, dim_options, [self.isomap_neighbors.value(), self.umap_neigbors.value(), self.umap_dist.value(), self.tsne_neighbors.value()])
         self.dialog = PlotWindow(transformed_data, norm_options, dim_options, np.array([colors, classes]), color=True)
         self.dialog.show()
+
 
     @Slot()
     def quit_application(self):
@@ -257,6 +295,15 @@ class Widget(QWidget):
 
         return norm_options, dim_options
 
+
+    def handle_error(self, errorMessage):
+        """
+        Display error window with errorMessage.
+        """
+        self.dialog = ErrorWindow(errorMessage)
+        self.dialog.show()
+
+
     def update_table(self):
         """
         Updates main screen table consisting pandas dataframe of data
@@ -273,6 +320,7 @@ class Widget(QWidget):
             for col in range(head.shape[1]):
                 self.table.setItem(row, col, QTableWidgetItem(str(head_array[row,col])))
 
+
     def sort_data(self):
         """
         Sort data for color plotting.
@@ -284,6 +332,7 @@ class Widget(QWidget):
         classes = list(sorted_data.index.unique())
     
         return sorted_data, colors, classes
+
 
     def convert_to_numeric(self):
         """
@@ -322,15 +371,15 @@ class MainWindow(QMainWindow):
         QApplication.quit()
 
 
-class FileNotFoundWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(FileNotFoundWindow, self).__init__(parent)
+class ErrorWindow(QMainWindow):
+    def __init__(self, errorMessage, parent=None):
+        super(ErrorWindow, self).__init__(parent)
         self.setWindowTitle("Error")
 
         # Display error message
         self.message = QLabel(self)
         self.message.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-        self.message.setText("File not found\nIf file is in the same folder with this code just type the file name\nFor example file.csv")
+        self.message.setText(errorMessage)
 
         # Push button for closing window
         self.ok = QPushButton("Ok")
