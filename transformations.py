@@ -48,6 +48,10 @@ def dimensional_reduction(data, algorithms, parameters=[]):
     return np.array(results)
 
 def transform_data(data, normalizations, algorithms, parameters=[]):
+    """
+    Transform data with selected scalinig, normalization and dimensionality reduction methods.
+    Returns numpy array with transformed data.
+    """
     normalization_results = scaling_and_normalization(data, normalizations)
     result_data = []
 
