@@ -38,8 +38,5 @@ If your system doesn't meet the requirements, you can go to umap folder in the v
 'parallel = False'
 
 ## Examples
-
-![Main window](https://github.com/markmult/Data-visualizer/tree/master/Examples/visualizer.png?raw=true)
-
-
-![Transformations and visualization with above options](https://github.com/markmult/Data-visualizer/tree/master/Examples/visualizer%20output.png?raw=true)
+<img src="https://github.com/markmult/Data-visualizer/blob/master/Examples/visualizer.png" alt="Example plotting options" width="700">
+<img src="https://github.com/markmult/Data-visualizer/blob/master/Examples/visualizer%20output.png" alt="Data visualization with above options" width="700">
