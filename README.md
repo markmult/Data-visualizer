@@ -16,6 +16,8 @@ reduction algorithms.
 For visualizations user can choose all these methods and compare how outputs differ with different methods. If input data has some kind of class information
 it is possible to plot datapoints also with colors based on the class labels. Requirement is that user has set index column before plotting.
 
+**This tool is primarily intended for educational purposes.**
+
 ## Setup
 
 I recommend to install and create a virtual enviroment and after that install the required extensions. To do this, you must have python 3.x and python3-pip installed
@@ -33,9 +35,25 @@ pip install -r relative\path\requirements.txt
 ```
 After you have installed required packages, run main.py
 
-Note! Umap requires that you have 64 bit windows and 64 bit python version to work with parallel option.
+**Note!** Umap requires that you have 64 bit windows and 64 bit python version to work with parallel option.
 If your system doesn't meet the requirements, you can go to umap folder in the virtual environment and modify python files where it says 'parallel = True' to
 'parallel = False'
+
+**Note!** Program might take some time to start at the first time. If it doesn't seem to start after short waiting, press ctrl+c and try again.
+
+## How to use
+
+1. Load data. If you cloned this repository, one example dataset is accessed with typing data/breast_cancer.csv and then pressing the load data -button
+2. Inspect the data table and try to get some idea of the data columns
+3. If there seems to be columns that doesn't contain useful information or columns that can't be parsed into numeric datatype, drop them by using index value
+4. Set index column if the data has some class information and you want to plot with corresponding colors. Index column is chosen by typing its name
+5. Choose scaling, normalization and dimensional reduction methods
+6. Tune parameters or use the default ones
+7. Plot with or without colors and class information
+8. Enjoy the visualizations
+9. If you have chosen many different methods, you can press the configure subplots -icon at the top of the plot window and choose Tight layout -option to avoid overlaps
+
+**Note!** It might take some time to calculate the transformations depending on the chosen methods and your computer. Visualizations appear after that.
 
 ## Examples
 
