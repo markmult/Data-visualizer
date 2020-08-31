@@ -61,7 +61,7 @@ class Widget(QWidget):
         self.right.addWidget(QLabel("Set column to index (Optional), type column name eg. City"))
         self.right.addWidget(self.index_col)
         self.right.addWidget(self.index)
-        self.right.addWidget(QLabel("Please, drop data columns that contain only text before plotting. Index column is exception."))
+        self.right.addWidget(QLabel("Please, drop data columns that can't be parsed into numeric datatype, like plain text. Index column is exception."))
         self.right.addWidget(self.plot)
         self.right.addWidget(self.color_plot)
         self.right.addWidget(self.quit)
@@ -265,7 +265,7 @@ class Widget(QWidget):
         self.update_table()
         sorted_data, colors, classes = self.sort_data()
         transformed_data = transformations.transform_data(sorted_data, norm_options, dim_options, [self.isomap_neighbors.value(), self.umap_neigbors.value(), self.umap_dist.value(), self.tsne_neighbors.value()])
-        self.dialog = PlotWindow(transformed_data, norm_options, dim_options, np.array([colors, classes]), color=True)
+        self.dialog = PlotWindow(transformed_data, norm_options, dim_options, np.array([colors, classes], dtype=object), color=True)
         self.dialog.show()
 
 
