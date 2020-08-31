@@ -38,5 +38,10 @@ If your system doesn't meet the requirements, you can go to umap folder in the v
 'parallel = False'
 
 ## Examples
-<img src="https://github.com/markmult/Data-visualizer/blob/master/Examples/visualizer.png" alt="Example plotting options" width="700">
-<img src="https://github.com/markmult/Data-visualizer/blob/master/Examples/visualizer%20output.png" alt="Data visualization with above options" width="700">
+
+#### Main window with loaded data.
+<img src="https://github.com/markmult/Data-visualizer/blob/master/Examples/visualizer.png" width="700">
+<br/>
+
+#### Data visualization with above options.
+<img src="https://github.com/markmult/Data-visualizer/blob/master/Examples/visualizer%20output.png" width="700">
