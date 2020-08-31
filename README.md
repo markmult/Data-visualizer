@@ -15,3 +15,31 @@ reduction algorithms.
 
 For visualizations user can choose all these methods and compare how outputs differ with different methods. If input data has some kind of class information
 it is possible to plot datapoints also with colors based on the class labels. Requirement is that user has set index column before plotting.
+
+## Setup
+
+I recommend to install and create a virtual enviroment and after that install the required extensions. To do this, you must have python 3.x and python3-pip installed
+(The Python installers for Windows include pip) then run following commands:
+
+```
+py -m pip install --user virtualenv
+py -m venv env
+source env\Scripts\activate
+```
+Next clone this repository or download the files.
+```
+git clone https://github.com/markmult/Data-visualizer.git
+pip install -r relative\path\requirements.txt
+```
+After you have installed required packages, run main.py
+
+Note! Umap requires that you have 64 bit windows and 64 bit python version to work with parallel option.
+If your system doesn't meet the requirements, you can go to umap folder in the virtual environment and modify python files where it says 'parallel = True' to
+'parallel = False'
+
+## Examples
+
+![Main window](https://github.com/markmult/Data-visualizer/tree/master/Examples/visualizer.png?raw=true)
+
+
+![Transformations and visualization with above options](https://github.com/markmult/Data-visualizer/tree/master/Examples/visualizer%20output.png?raw=true)
