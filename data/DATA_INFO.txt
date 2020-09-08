@@ -1,0 +1,26 @@
+breast_cancer.csv
+source: https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)
+
+country_data.csv
+source: https://www.cia.gov/library/publications/the-world-factbook/docs/rankorderguide.html
+
+happiness.csv
+source: https://www.kaggle.com/unsdsn/world-happiness
+
+spotify.csv
+source: https://developer.spotify.com/documentation/web-api/
+
+stocks.csv
+source: https://finance.yahoo.com/most-active
+
+weather.csv
+source: https://www.ilmatieteenlaitos.fi/avoin-data
+
+kansainvälisyys.xlsx
+source: https://vipunen.fi/fi-fi/yliopisto/Sivut/Kansainvälisyys.aspx
+
+lukiot.xlsx
+source: https://vipunen.fi/fi-fi/_layouts/15/xlviewer.aspx?id=/fi-fi/Raportit/Ylioppilastutkinnon%20arvosanakeskiarvot%20-%20oppilaitos.xlsb
+
+oulun_lukiot.xlsx
+source: https://vipunen.fi/fi-fi/_layouts/15/xlviewer.aspx?id=/fi-fi/Raportit/Ylioppilastutkinnon%20arvosanakeskiarvot%20-%20oppilaitos.xlsb
