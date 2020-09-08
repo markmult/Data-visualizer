@@ -14,6 +14,7 @@ import numpy as np
 import transformations
 import re
 
+
 class Widget(QWidget):
     def __init__(self):
         QWidget.__init__(self)
@@ -46,8 +47,10 @@ class Widget(QWidget):
         self.color_plot = QPushButton("Plot with colors (Based on the index column value)")
         self.color_plot.setStyleSheet("background-color:#eb8c34;")
 
-        # Disabling 'Load' button
+        # Disabling buttons before requirements are met
         self.load.setEnabled(False)
+        self.plot.setEnabled(False)
+        self.color_plot.setEnabled(False)
 
         self.right = QVBoxLayout()
         self.right.setMargin(10)
@@ -172,7 +175,7 @@ class Widget(QWidget):
 
 
     @Slot()
-    def check_disable(self, s):
+    def check_disable(self):
         """
         Disable load data button if no path is given.
         """
@@ -220,7 +223,7 @@ class Widget(QWidget):
         """
         try:
             cols = [int(x) for x in self.drop_cols.text().split(',')]
-            self.data = self.data.drop(self.data.columns[cols], axis=1)
+            self.data.drop(self.data.columns[cols], axis=1, inplace=True)
             self.update_table()
         except (IndexError, ValueError):
             self.handle_error("Invalid index value\nUse index numbers starting from 0\nFor example 0,1,2 or just 0 etc.")
@@ -232,7 +235,7 @@ class Widget(QWidget):
         Change index column in dataframe and update table.
         """
         try:
-            self.data = self.data.set_index(self.index_col.text())
+            self.data.set_index(self.index_col.text(), inplace=True)
             self.update_table()
         except KeyError:
             self.handle_error("Column not found")
@@ -248,9 +251,13 @@ class Widget(QWidget):
         norm_options, dim_options = self.plot_options()
         self.convert_to_numeric()
         self.update_table()
-        transformed_data = transformations.transform_data(self.data, norm_options, dim_options, [self.isomap_neighbors.value(), self.umap_neigbors.value(), self.umap_dist.value(), self.tsne_neighbors.value()])
-        self.dialog = PlotWindow(transformed_data, norm_options, dim_options)
-        self.dialog.show()
+        parameters = [self.isomap_neighbors.value(), self.umap_neigbors.value(), self.umap_dist.value(), self.tsne_neighbors.value()]
+        try:
+            transformed_data = transformations.transform_data(self.data, norm_options, dim_options, parameters)
+            self.dialog = PlotWindow(transformed_data, norm_options, dim_options)
+            self.dialog.show()
+        except ValueError:
+            self.handle_error("Some values can't be converted into numeric")
 
 
     @Slot()
@@ -264,9 +271,13 @@ class Widget(QWidget):
         self.convert_to_numeric()
         self.update_table()
         sorted_data, colors, classes = self.sort_data()
-        transformed_data = transformations.transform_data(sorted_data, norm_options, dim_options, [self.isomap_neighbors.value(), self.umap_neigbors.value(), self.umap_dist.value(), self.tsne_neighbors.value()])
-        self.dialog = PlotWindow(transformed_data, norm_options, dim_options, np.array([colors, classes], dtype=object), color=True)
-        self.dialog.show()
+        parameters = [self.isomap_neighbors.value(), self.umap_neigbors.value(), self.umap_dist.value(), self.tsne_neighbors.value()]
+        try:
+            transformed_data = transformations.transform_data(sorted_data, norm_options, dim_options, parameters)
+            self.dialog = PlotWindow(transformed_data, norm_options, dim_options, np.array([colors, classes], dtype=object), color=True)
+            self.dialog.show()
+        except ValueError:
+            self.handle_error("Some values can't be converted into numeric")
 
 
     @Slot()
@@ -308,7 +319,7 @@ class Widget(QWidget):
         """
         Updates main screen table consisting pandas dataframe of data
         """
-        head = self.data.head(30)
+        head = self.data.head(300)
         headers = list(head)
         self.table.setRowCount(head.shape[0])
         self.table.setColumnCount(head.shape[1])
@@ -463,7 +474,8 @@ class PlotWindow(QMainWindow):
                 col.set_xticks([])
                 
                 if i == (len(self.norm_options)-1) and j == (len(self.dim_options)-1):
-                    info = [plt.plot([],[], marker='o', color=cm.rainbow(int(k)/(len(self.classes)-1)), linestyle='None', label=self.classes[k])[0]  for k in range(len(self.classes))]
+                    info = [plt.plot([],[], marker='o', color=cm.rainbow(int(k)/(len(self.classes)-1)), linestyle='None',
+                           label=self.classes[k])[0] for k in range(len(self.classes))]
                     col.legend(handles=info, loc='center left', bbox_to_anchor=(1.01, 0.75), prop={'size':8})
 
 
